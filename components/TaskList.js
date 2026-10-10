@@ -42,7 +42,7 @@ export default function TaskList({ tasks, header, emptyIcon, emptyTitle, emptyTe
 const styles = StyleSheet.create({
   content: {
     padding: 16,
-    paddingBottom: 110, // espaço para o botão flutuante
+    paddingBottom: 110,
     flexGrow: 1,
   },
   empty: {

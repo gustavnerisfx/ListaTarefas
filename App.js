@@ -9,16 +9,21 @@ import { MaterialCommunityIcons } from '@expo/vector-icons';
 
 import { AppThemeProvider, useAppTheme } from './context/ThemeContext';
 import { TasksProvider, useTasks } from './context/TasksContext';
+import { ProfileProvider } from './context/ProfileContext';
 import { darkTheme, lightTheme, navDarkTheme, navLightTheme } from './theme/theme';
 import { isOverdue } from './utils/taskUtils';
 import Logo from './components/Logo';
+import HeaderAvatar from './components/HeaderAvatar';
 import PendingScreen from './screens/PendingScreen';
 import DoneScreen from './screens/DoneScreen';
 import SettingsScreen from './screens/SettingsScreen';
+import ProfileScreen from './screens/ProfileScreen';
 import TaskFormScreen from './screens/TaskFormScreen';
 
 const Tab = createBottomTabNavigator();
 const Stack = createNativeStackNavigator();
+
+const renderAvatar = () => <HeaderAvatar />;
 
 function Tabs() {
   const { colors } = useTheme();
@@ -31,6 +36,7 @@ function Tabs() {
       screenOptions={{
         headerTitleAlign: 'left',
         headerShadowVisible: false,
+        headerRightContainerStyle: { paddingRight: 16 },
         tabBarActiveTintColor: colors.primary,
         tabBarInactiveTintColor: colors.onSurfaceVariant,
         tabBarLabelStyle: { fontWeight: '600' },
@@ -41,6 +47,7 @@ function Tabs() {
         component={PendingScreen}
         options={{
           headerTitle: () => <Logo size={30} />,
+          headerRight: renderAvatar,
           tabBarBadge: overdueCount > 0 ? overdueCount : undefined,
           tabBarIcon: ({ color, size, focused }) => (
             <MaterialCommunityIcons
@@ -55,6 +62,7 @@ function Tabs() {
         name="Concluídas"
         component={DoneScreen}
         options={{
+          headerRight: renderAvatar,
           tabBarIcon: ({ color, size, focused }) => (
             <MaterialCommunityIcons
               name={focused ? 'check-circle' : 'check-circle-outline'}
@@ -65,9 +73,23 @@ function Tabs() {
         }}
       />
       <Tab.Screen
+        name="Perfil"
+        component={ProfileScreen}
+        options={{
+          tabBarIcon: ({ color, size, focused }) => (
+            <MaterialCommunityIcons
+              name={focused ? 'account-circle' : 'account-circle-outline'}
+              color={color}
+              size={size}
+            />
+          ),
+        }}
+      />
+      <Tab.Screen
         name="Configurações"
         component={SettingsScreen}
         options={{
+          headerRight: renderAvatar,
           tabBarIcon: ({ color, size, focused }) => (
             <MaterialCommunityIcons
               name={focused ? 'cog' : 'cog-outline'}
@@ -88,26 +110,28 @@ function Root() {
 
   return (
     <PaperProvider theme={isDark ? darkTheme : lightTheme}>
-      <TasksProvider>
-        <StatusBar style={isDark ? 'light' : 'dark'} />
-        <NavigationContainer theme={isDark ? navDarkTheme : navLightTheme}>
-          <Stack.Navigator>
-            <Stack.Screen
-              name="Tabs"
-              component={Tabs}
-              options={{ headerShown: false }}
-            />
-            <Stack.Screen
-              name="TaskForm"
-              component={TaskFormScreen}
-              options={({ route }) => ({
-                title: route.params?.taskId ? 'Editar tarefa' : 'Nova tarefa',
-                presentation: 'modal',
-              })}
-            />
-          </Stack.Navigator>
-        </NavigationContainer>
-      </TasksProvider>
+      <ProfileProvider>
+        <TasksProvider>
+          <StatusBar style={isDark ? 'light' : 'dark'} />
+          <NavigationContainer theme={isDark ? navDarkTheme : navLightTheme}>
+            <Stack.Navigator>
+              <Stack.Screen
+                name="Tabs"
+                component={Tabs}
+                options={{ headerShown: false }}
+              />
+              <Stack.Screen
+                name="TaskForm"
+                component={TaskFormScreen}
+                options={({ route }) => ({
+                  title: route.params?.taskId ? 'Editar tarefa' : 'Nova tarefa',
+                  presentation: 'modal',
+                })}
+              />
+            </Stack.Navigator>
+          </NavigationContainer>
+        </TasksProvider>
+      </ProfileProvider>
     </PaperProvider>
   );
 }

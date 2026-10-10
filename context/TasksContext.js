@@ -20,7 +20,6 @@ export function TasksProvider({ children }) {
   const [loaded, setLoaded] = useState(false);
   const [now, setNow] = useState(Date.now());
 
-  // carrega ao abrir o app
   useEffect(() => {
     AsyncStorage.getItem(STORAGE_KEY)
       .then((json) => {
@@ -29,13 +28,10 @@ export function TasksProvider({ children }) {
       .finally(() => setLoaded(true));
   }, []);
 
-  // salva a cada alteração (só depois do carregamento inicial)
   useEffect(() => {
     if (loaded) AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(tasks));
   }, [tasks, loaded]);
 
-  // Relógio 1: atualiza a cada 30s (mantém textos como "Vence em 5 min" em dia)
-  // e quando o app volta ao primeiro plano.
   useEffect(() => {
     const interval = setInterval(() => setNow(Date.now()), 30000);
     const subscription = AppState.addEventListener('change', (state) => {
@@ -47,8 +43,6 @@ export function TasksProvider({ children }) {
     };
   }, []);
 
-  // Relógio 2: agenda um alarme para o exato momento do próximo vencimento,
-  // assim a tarefa vira "vencida" na hora, sem esperar os 30s.
   useEffect(() => {
     const current = Date.now();
     const next = tasks

@@ -42,7 +42,6 @@ export default function TaskCard({ task }) {
           },
         ]}
       >
-        {/* Cabeçalho: toque para expandir/recolher */}
         <TouchableRipple onPress={() => setExpanded((v) => !v)}>
           <View style={styles.header}>
             <Checkbox
@@ -95,7 +94,6 @@ export default function TaskCard({ task }) {
           </View>
         </TouchableRipple>
 
-        {/* Detalhes */}
         {expanded && (
           <View style={[styles.details, { borderTopColor: colors.outlineVariant }]}>
             <Text variant="labelMedium" style={{ color: colors.onSurfaceVariant }}>

@@ -7,7 +7,7 @@ const ThemeContext = createContext();
 
 export function AppThemeProvider({ children }) {
   const systemScheme = useColorScheme();
-  // começa com o tema do sistema; se o usuário já escolheu, a escolha dele vence
+  
   const [isDark, setIsDark] = useState(systemScheme === 'dark');
   const [ready, setReady] = useState(false);
 
